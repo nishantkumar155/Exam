@@ -1,0 +1,37 @@
+diff --git a/quiz.module b/quiz.module
+index c5ac7c47..b22f260d 100644
+--- a/quiz.module
++++ b/quiz.module
+@@ -1883,17 +1883,23 @@ function quiz_take_quiz($quiz) {
+         $quiz_result = quiz_result_load($result_id);
+         // Layout has already been ordered.
+         $prev = NULL;
+-        foreach ($quiz_result->getLayout() as $question) {
+-          $qra = entity_load_single('quiz_result_answer', $question['result_answer_id']);
+-          if ($prev) {
+-            if (!$qra->answer_timestamp && $prev->answer_timestamp) {
+-              // This question has not been answered, but the previous
+-              // question has.
+-              $_SESSION['quiz'][$quiz->nid]['current'] = $question['number'];
++        
++        if ($quiz_result->getLayout()) {
++          foreach ($quiz_result->getLayout() as $question) {
++            $qra = entity_load_single('quiz_result_answer', $question['result_answer_id']);
++            if ($prev) {
++              if (!$qra->answer_timestamp && $prev->answer_timestamp) {
++                // This question has not been answered, but the previous
++                // question has.
++                $_SESSION['quiz'][$quiz->nid]['current'] = $question['number'];
++              }
+             }
+-          }
+ 
+-          $prev = clone $qra;
++            $prev = clone $qra;
++          }
++        }
++        else {
++          return FALSE;
+         }
+ 
+         // Resume a quiz from the database.
